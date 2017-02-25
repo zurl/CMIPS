@@ -196,7 +196,7 @@ const tokenizer = new Tokenizer<IMyTokenizer>({
     $symbol18: /^signed$/,
     $symbol19: /^unsigned$/,
     $symbol20: /^\{$/,
-    $symbol21: /^\}$/,
+    $symbol21: /^}$/,
     $symbol22: /^struct$/,
     $symbol23: /^union$/,
     $symbol24: /^,$/,
@@ -241,9 +241,9 @@ const tokenizer = new Tokenizer<IMyTokenizer>({
     $symbol63: /^!$/,
     $symbol64: /^\.\.\.$/,
     $symbol65: /^enum$/,
-    $symbol66: /^case$/,
-    $symbol67: /^default$/,
-    $symbol68: /^\;$/,
+    $symbol66: /^;$/,
+    $symbol67: /^case$/,
+    $symbol68: /^default$/,
     $symbol69: /^if$/,
     $symbol70: /^else$/,
     $symbol71: /^switch$/,
@@ -357,6 +357,8 @@ export const NodeType = {
     iteration_statement: Symbol("iteration_statement"),
     jump_statement: Symbol("jump_statement"),
 };
+
+
 const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     token: tokenizer.token(),
     tokenMap: tokenizer.tokenMap(),
@@ -383,7 +385,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[],$=>$],
     ],
     external_declaration$rs: _=>[
-        [[_.external_declaration$r],$=>Node(NodeType.external_declaration, $)],
+        [[_.external_declaration$r],$=>Node(NodeType.external_declaration, $[0])],
         [[_.external_declaration$rs, _.external_declaration$r],$=>Node(NodeType.external_declaration,$[0].concat($[1]))],
     ],
     external_declaration: _=>[
@@ -398,7 +400,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[],$=>$],
     ],
     declaration_specifier$rs: _=>[
-        [[_.declaration_specifier$r],$=>Node(NodeType.declaration_specifier, $)],
+        [[_.declaration_specifier$r],$=>Node(NodeType.declaration_specifier, $[0])],
         [[_.declaration_specifier$rs, _.declaration_specifier$r],$=>Node(NodeType.declaration_specifier,$[0].concat($[1]))],
     ],
     declaration$r: _=>[
@@ -406,7 +408,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[],$=>$],
     ],
     declaration$rs: _=>[
-        [[_.declaration$r],$=>Node(NodeType.declaration, $)],
+        [[_.declaration$r],$=>Node(NodeType.declaration, $[0])],
         [[_.declaration$rs, _.declaration$r],$=>Node(NodeType.declaration,$[0].concat($[1]))],
     ],
     declaration_specifier: _=>[
@@ -442,7 +444,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.struct_declaration],$=>$],
     ],
     struct_declaration$ms: _=>[
-        [[_.struct_declaration$m],$=>Node(NodeType.struct_declaration, $)],
+        [[_.struct_declaration$m],$=>Node(NodeType.struct_declaration, $[0])],
         [[_.struct_declaration$ms, _.struct_declaration$m],$=>Node(NodeType.struct_declaration,$[0].concat($[1]))],
     ],
     struct_or_union: _=>[
@@ -457,7 +459,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[],$=>$],
     ],
     specifier_qualifier$rs: _=>[
-        [[_.specifier_qualifier$r],$=>Node(NodeType.specifier_qualifier, $)],
+        [[_.specifier_qualifier$r],$=>Node(NodeType.specifier_qualifier, $[0])],
         [[_.specifier_qualifier$rs, _.specifier_qualifier$r],$=>Node(NodeType.specifier_qualifier,$[0].concat($[1]))],
     ],
     specifier_qualifier: _=>[
@@ -488,7 +490,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[],$=>$],
     ],
     type_qualifier$rs: _=>[
-        [[_.type_qualifier$r],$=>Node(NodeType.type_qualifier, $)],
+        [[_.type_qualifier$r],$=>Node(NodeType.type_qualifier, $[0])],
         [[_.type_qualifier$rs, _.type_qualifier$r],$=>Node(NodeType.type_qualifier,$[0].concat($[1]))],
     ],
     type_qualifier: _=>[
@@ -511,7 +513,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[],$=>$],
     ],
     identifier$rs: _=>[
-        [[_.identifier$r],$=>Node(NodeType.identifier, $)],
+        [[_.identifier$r],$=>Node(NodeType.identifier, $[0])],
         [[_.identifier$rs, _.identifier$r],$=>Node(NodeType.identifier,$[0].concat($[1]))],
     ],
     constant_expression: _=>[
@@ -595,7 +597,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[],$=>$],
     ],
     assignment_expression$rs: _=>[
-        [[_.assignment_expression$r],$=>Node(NodeType.assignment_expression, $)],
+        [[_.assignment_expression$r],$=>Node(NodeType.assignment_expression, $[0])],
         [[_.assignment_expression$rs, _.assignment_expression$r],$=>Node(NodeType.assignment_expression,$[0].concat($[1]))],
     ],
     primary_expression: _=>[
@@ -614,8 +616,8 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.expression,_.token.$symbol24,_.assignment_expression],$=>Node(NodeType.expression, $)],
     ],
     assignment_expression: _=>[
-        [[_.conditional_expression],$=>Node(NodeType.assignment_expression, $)],
         [[_.unary_expression,_.assignment_operator,_.assignment_expression],$=>Node(NodeType.assignment_expression, $)],
+        [[_.conditional_expression],$=>Node(NodeType.assignment_expression, $)],
     ],
     assignment_operator: _=>[
         [[_.token.$symbol45],$=>Node(NodeType.assignment_operator, $)],
@@ -645,7 +647,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.specifier_qualifier],$=>$],
     ],
     specifier_qualifier$ms: _=>[
-        [[_.specifier_qualifier$m],$=>Node(NodeType.specifier_qualifier, $)],
+        [[_.specifier_qualifier$m],$=>Node(NodeType.specifier_qualifier, $[0])],
         [[_.specifier_qualifier$ms, _.specifier_qualifier$m],$=>Node(NodeType.specifier_qualifier,$[0].concat($[1]))],
     ],
     abstract_declarator$o: _=>[
@@ -669,7 +671,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.declaration_specifier],$=>$],
     ],
     declaration_specifier$ms: _=>[
-        [[_.declaration_specifier$m],$=>Node(NodeType.declaration_specifier, $)],
+        [[_.declaration_specifier$m],$=>Node(NodeType.declaration_specifier, $[0])],
         [[_.declaration_specifier$ms, _.declaration_specifier$m],$=>Node(NodeType.declaration_specifier,$[0].concat($[1]))],
     ],
     abstract_declarator: _=>[
@@ -679,10 +681,10 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ],
     direct_abstract_declarator: _=>[
         [[_.token.$symbol29,_.abstract_declarator,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
-        [[_.direct_abstract_declarator,_.token.$symbol31,_.constant_expression$o,_.token.$symbol32],$=>Node(NodeType.direct_abstract_declarator, $)],
-        [[_.direct_abstract_declarator,_.token.$symbol29,_.parameter_type_list$o,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
         [[_.token.$symbol31,_.constant_expression$o,_.token.$symbol32],$=>Node(NodeType.direct_abstract_declarator, $)],
         [[_.token.$symbol29,_.parameter_type_list$o,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
+        [[_.direct_abstract_declarator,_.token.$symbol31,_.constant_expression$o,_.token.$symbol32],$=>Node(NodeType.direct_abstract_declarator, $)],
+        [[_.direct_abstract_declarator,_.token.$symbol29,_.parameter_type_list$o,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
     ],
     parameter_type_list$o: _=>[
         [[_.parameter_type_list],$=>Node(NodeType.parameter_type_list,$)],
@@ -697,14 +699,14 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.identifier,_.token.$symbol45,_.constant_expression],$=>Node(NodeType.enumerator, $)],
     ],
     declaration: _=>[
-        [[_.declaration_specifier$ms,_.init_declarator$rs],$=>Node(NodeType.declaration, $)],
+        [[_.declaration_specifier$ms,_.init_declarator$rs,_.token.$symbol66],$=>Node(NodeType.declaration, $)],
     ],
     init_declarator$r: _=>[
         [[_.init_declarator],$=>$],
         [[],$=>$],
     ],
     init_declarator$rs: _=>[
-        [[_.init_declarator$r],$=>Node(NodeType.init_declarator, $)],
+        [[_.init_declarator$r],$=>Node(NodeType.init_declarator, $[0])],
         [[_.init_declarator$rs, _.init_declarator$r],$=>Node(NodeType.init_declarator,$[0].concat($[1]))],
     ],
     init_declarator: _=>[
@@ -728,7 +730,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[],$=>$],
     ],
     statement$rs: _=>[
-        [[_.statement$r],$=>Node(NodeType.statement, $)],
+        [[_.statement$r],$=>Node(NodeType.statement, $[0])],
         [[_.statement$rs, _.statement$r],$=>Node(NodeType.statement,$[0].concat($[1]))],
     ],
     statement: _=>[
@@ -741,11 +743,11 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ],
     labeled_statement: _=>[
         [[_.identifier,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
-        [[_.token.$symbol66,_.constant_expression,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
-        [[_.token.$symbol67,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
+        [[_.token.$symbol67,_.constant_expression,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
+        [[_.token.$symbol68,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
     ],
     expression_statement: _=>[
-        [[_.expression$o,_.token.$symbol68],$=>Node(NodeType.expression_statement, $)],
+        [[_.expression$o,_.token.$symbol66],$=>Node(NodeType.expression_statement, $)],
     ],
     expression$o: _=>[
         [[_.expression],$=>Node(NodeType.expression,$)],
@@ -758,25 +760,20 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ],
     iteration_statement: _=>[
         [[_.token.$symbol72,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement],$=>Node(NodeType.iteration_statement, $)],
-        [[_.token.$symbol73,_.statement,_.token.$symbol72,_.token.$symbol29,_.expression,_.token.$symbol30,_.token.$symbol68],$=>Node(NodeType.iteration_statement, $)],
-        [[_.token.$symbol74,_.token.$symbol29,_.expression$o,_.token.$symbol68,_.expression$o,_.token.$symbol68,_.expression$o,_.token.$symbol30,_.statement],$=>Node(NodeType.iteration_statement, $)],
+        [[_.token.$symbol73,_.statement,_.token.$symbol72,_.token.$symbol29,_.expression,_.token.$symbol30,_.token.$symbol66],$=>Node(NodeType.iteration_statement, $)],
+        [[_.token.$symbol74,_.token.$symbol29,_.expression$o,_.token.$symbol66,_.expression$o,_.token.$symbol66,_.expression$o,_.token.$symbol30,_.statement],$=>Node(NodeType.iteration_statement, $)],
     ],
     jump_statement: _=>[
-        [[_.token.$symbol75,_.identifier,_.token.$symbol68],$=>Node(NodeType.jump_statement, $)],
-        [[_.token.$symbol76,_.token.$symbol68],$=>Node(NodeType.jump_statement, $)],
-        [[_.token.$symbol77,_.token.$symbol68],$=>Node(NodeType.jump_statement, $)],
-        [[_.token.$symbol78,_.expression$o,_.token.$symbol68],$=>Node(NodeType.jump_statement, $)],
+        [[_.token.$symbol75,_.identifier,_.token.$symbol66],$=>Node(NodeType.jump_statement, $)],
+        [[_.token.$symbol76,_.token.$symbol66],$=>Node(NodeType.jump_statement, $)],
+        [[_.token.$symbol77,_.token.$symbol66],$=>Node(NodeType.jump_statement, $)],
+        [[_.token.$symbol78,_.expression$o,_.token.$symbol66],$=>Node(NodeType.jump_statement, $)],
     ],
-}, true);
-
-
-
-
+});
 
 import testcode from './eg';
 import {IRGenerator} from "./ir_gen";
 const [token, tokenType] = tokenizer.tokenize(testcode);
-
 
 const result = parser.parse(token, tokenType, 'function_definition');
 function getSpace( deep ){
@@ -786,10 +783,16 @@ function getSpace( deep ){
 }
 
 for(let i = 0 ;i <= token.length; i++){
-    //console.log(`${token[i]} : ${parser.tokenMapReverse.get(tokenType[i])}`)
+    console.log(`${token[i]} : ${parser.tokenMapReverse.get(tokenType[i])}`)
+}
+
+function isArray(arr){
+    return Object.prototype.toString.call(arr) === "[object Array]";
 }
 function printResult(x, deep = 0){
     if( x.hasOwnProperty(NodeSymbol) ){
+        if(x.length == 1 && isArray(x[0]))
+            return printResult(x[0], deep);
         return getSpace(deep) + x[NodeSymbol].toString() + " : \n" + x.map(x=>printResult(x, deep + 1)).join('\n');
     }else{
         return getSpace(deep) + `${x}\n`;

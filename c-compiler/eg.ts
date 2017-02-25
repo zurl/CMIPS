@@ -5,5 +5,7 @@
  */
 export default`
    void main(){
-        int a = 1;
+        int a; int b; int c;
+        a = 1 + 4;
+        b = 2 * 7 + 6;
    }`

@@ -141,14 +141,14 @@ result.forEach(item =>{
            }
            else if( token.hasOwnProperty(RepSymbol)){
                exp[`${replaceInvalidChar(token[0])}$r`] = [`[${token.map(x=>convertToGrammarRule(x)).join(',')}],$=>$`, `[],$=>$`];
-               exp[`${replaceInvalidChar(token[0])}$rs`] = [`[_.${replaceInvalidChar(token[0])}$r],$=>Node(NodeType.${replaceInvalidChar(token[0])}, $)`
+               exp[`${replaceInvalidChar(token[0])}$rs`] = [`[_.${replaceInvalidChar(token[0])}$r],$=>Node(NodeType.${replaceInvalidChar(token[0])}, $[0])`
                    ,`[_.${replaceInvalidChar(token[0])}$rs, _.${replaceInvalidChar(token[0])}$r],$=>Node(NodeType.${replaceInvalidChar(token[0])},$[0].concat($[1]))`];
                result.push(`_.${replaceInvalidChar(token[0])}$rs`);
            }
            else if( token.hasOwnProperty(RepMoreSymbol)){
                exp[`${replaceInvalidChar(token[0])}$m`] = [`[${token.map(x=>convertToGrammarRule(x)).join(',')}],$=>$`];
-               exp[`${replaceInvalidChar(token[0])}$ms`] = [`[_.${replaceInvalidChar(token[0])}$m],$=>Node(NodeType.${replaceInvalidChar(token[0])}, $)`
-                   ,`[_.${replaceInvalidChar(token[0])}$ms, _.${replaceInvalidChar(token[0])}$m],$=>Node(NodeType.${replaceInvalidChar(token[0])},$[0].concat($[1])))`];
+               exp[`${replaceInvalidChar(token[0])}$ms`] = [`[_.${replaceInvalidChar(token[0])}$m],$=>Node(NodeType.${replaceInvalidChar(token[0])}, $[0])`
+                   ,`[_.${replaceInvalidChar(token[0])}$ms, _.${replaceInvalidChar(token[0])}$m],$=>Node(NodeType.${replaceInvalidChar(token[0])},$[0].concat($[1]))`];
                result.push(`_.${replaceInvalidChar(token[0])}$ms`);
            }
            else{

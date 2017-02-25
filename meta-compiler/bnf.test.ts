@@ -150,9 +150,9 @@ export default`
 <expression> ::= <assignment-expression>
                | <expression> , <assignment-expression>
 
-<assignment-expression> ::= <conditional-expression>
-                          | <unary-expression> <assignment-operator> <assignment-expression>
-
+<assignment-expression> ::=  <unary-expression> <assignment-operator> <assignment-expression>
+                           | <conditional-expression>
+                         
 <assignment-operator> ::= =
                         | @*=
                         | /=
@@ -206,7 +206,7 @@ export default`
 
 <typedef-name> ::= <identifier>
 
-<declaration> ::=  {<declaration-specifier>}+ {<init-declarator>}*
+<declaration> ::=  {<declaration-specifier>}+ {<init-declarator>}* ;
 
 <init-declarator> ::= <declarator>
                     | <declarator> = <initializer>
