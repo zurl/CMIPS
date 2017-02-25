@@ -1,4 +1,5 @@
 
+
 export interface IMyTokenizer extends IAbstractTokenElements {
     $symbol1: IToken;
     $symbol2: IToken;
@@ -74,10 +75,6 @@ export interface IMyTokenizer extends IAbstractTokenElements {
     $symbol72: IToken;
     $symbol73: IToken;
     $symbol74: IToken;
-    $symbol75: IToken;
-    $symbol76: IToken;
-    $symbol77: IToken;
-    $symbol78: IToken;
 }
 export interface IMyParser<T extends IAbstractTokenElements> extends IAbstractParserElements<T> {
     identifier: ISymbol<IMyParser<T>>;
@@ -92,8 +89,6 @@ export interface IMyParser<T extends IAbstractTokenElements> extends IAbstractPa
     function_definition: ISymbol<IMyParser<T>>;
     declaration_specifier$r: ISymbol<IMyParser<T>>;
     declaration_specifier$rs: ISymbol<IMyParser<T>>;
-    declaration$r: ISymbol<IMyParser<T>>;
-    declaration$rs: ISymbol<IMyParser<T>>;
     declaration_specifier: ISymbol<IMyParser<T>>;
     storage_class_specifier: ISymbol<IMyParser<T>>;
     type_specifier: ISymbol<IMyParser<T>>;
@@ -132,28 +127,24 @@ export interface IMyParser<T extends IAbstractTokenElements> extends IAbstractPa
     cast_expression: ISymbol<IMyParser<T>>;
     unary_expression: ISymbol<IMyParser<T>>;
     postfix_expression: ISymbol<IMyParser<T>>;
-    assignment_expression$r: ISymbol<IMyParser<T>>;
-    assignment_expression$rs: ISymbol<IMyParser<T>>;
     primary_expression: ISymbol<IMyParser<T>>;
     constant: ISymbol<IMyParser<T>>;
     expression: ISymbol<IMyParser<T>>;
     assignment_expression: ISymbol<IMyParser<T>>;
+    assignment_statement: ISymbol<IMyParser<T>>;
     assignment_operator: ISymbol<IMyParser<T>>;
     unary_operator: ISymbol<IMyParser<T>>;
     type_name: ISymbol<IMyParser<T>>;
     specifier_qualifier$m: ISymbol<IMyParser<T>>;
     specifier_qualifier$ms: ISymbol<IMyParser<T>>;
     abstract_declarator$o: ISymbol<IMyParser<T>>;
-    parameter_type_list: ISymbol<IMyParser<T>>;
     parameter_list: ISymbol<IMyParser<T>>;
     parameter_declaration: ISymbol<IMyParser<T>>;
     declaration_specifier$m: ISymbol<IMyParser<T>>;
     declaration_specifier$ms: ISymbol<IMyParser<T>>;
     abstract_declarator: ISymbol<IMyParser<T>>;
     direct_abstract_declarator: ISymbol<IMyParser<T>>;
-    parameter_type_list$o: ISymbol<IMyParser<T>>;
-    enumerator_list: ISymbol<IMyParser<T>>;
-    enumerator: ISymbol<IMyParser<T>>;
+    parameter_list$o: ISymbol<IMyParser<T>>;
     declaration: ISymbol<IMyParser<T>>;
     init_declarator$r: ISymbol<IMyParser<T>>;
     init_declarator$rs: ISymbol<IMyParser<T>>;
@@ -161,6 +152,8 @@ export interface IMyParser<T extends IAbstractTokenElements> extends IAbstractPa
     initializer: ISymbol<IMyParser<T>>;
     initializer_list: ISymbol<IMyParser<T>>;
     compound_statement: ISymbol<IMyParser<T>>;
+    declaration$r: ISymbol<IMyParser<T>>;
+    declaration$rs: ISymbol<IMyParser<T>>;
     statement$r: ISymbol<IMyParser<T>>;
     statement$rs: ISymbol<IMyParser<T>>;
     statement: ISymbol<IMyParser<T>>;
@@ -175,7 +168,7 @@ export interface IMyParser<T extends IAbstractTokenElements> extends IAbstractPa
 import {IAbstractTokenElements,IToken,IAbstractParserElements,ISymbol} from 'tparser';
 import {Parser, Tokenizer} from "tparser";
 const tokenizer = new Tokenizer<IMyTokenizer>({
-    split: /\s*([a-zA-Z_][a-zA-Z0-9_]*|-?[0-9]+(\.[0-9]*)?|\;|\+|\%|\-|\*|\/|=|\+=|\-=|\/=|\*=|\||\&|\^|\(|\)|\]|\]|\{|\})\s*/y,
+    split: /\s*([a-zA-Z_][a-zA-Z0-9_]*|-?[0-9]+(\.[0-9]*)?|\,|\;|\+|\%|\-|\*|\/|=|\+=|\-=|\/=|\*=|\||\&|\^|\(|\)|\]|\]|\{|\})\s*/y,
     $symbol1: [/^[a-zA-Z_][a-zA-Z0-9_]*$/, -1],
     $symbol2: /^".*"$/,
     $symbol3: /^'.*'$/,
@@ -209,53 +202,48 @@ const tokenizer = new Tokenizer<IMyTokenizer>({
     $symbol31: /^\[$/,
     $symbol32: /^]$/,
     $symbol33: /^\?$/,
-    $symbol34: /^<$/,
-    $symbol35: /^logical-or-expression$/,
-    $symbol36: /^\|\|$/,
-    $symbol37: /^logical-and-expression$/,
-    $symbol38: /^&&$/,
-    $symbol39: /^\|$/,
-    $symbol40: /^^$/,
-    $symbol41: /^&$/,
-    $symbol42: /^==$/,
-    $symbol43: /^!=$/,
-    $symbol44: /^>$/,
-    $symbol45: /^=$/,
-    $symbol46: /^\+$/,
-    $symbol47: /^-$/,
-    $symbol48: /^\/$/,
-    $symbol49: /^%$/,
-    $symbol50: /^\+\+$/,
-    $symbol51: /^--$/,
-    $symbol52: /^sizeof$/,
-    $symbol53: /^\.$/,
-    $symbol54: /^\*=$/,
-    $symbol55: /^\/=$/,
-    $symbol56: /^%=$/,
-    $symbol57: /^\+=$/,
-    $symbol58: /^-=$/,
-    $symbol59: /^&=$/,
-    $symbol60: /^^=$/,
-    $symbol61: /^\|=$/,
-    $symbol62: /^~$/,
-    $symbol63: /^!$/,
-    $symbol64: /^\.\.\.$/,
-    $symbol65: /^enum$/,
-    $symbol66: /^;$/,
-    $symbol67: /^case$/,
-    $symbol68: /^default$/,
-    $symbol69: /^if$/,
-    $symbol70: /^else$/,
-    $symbol71: /^switch$/,
-    $symbol72: /^while$/,
-    $symbol73: /^do$/,
-    $symbol74: /^for$/,
-    $symbol75: /^goto$/,
-    $symbol76: /^continue$/,
-    $symbol77: /^break$/,
-    $symbol78: /^return$/,
+    $symbol34: /^\|\|$/,
+    $symbol35: /^&&$/,
+    $symbol36: /^\|$/,
+    $symbol37: /^^$/,
+    $symbol38: /^&$/,
+    $symbol39: /^==$/,
+    $symbol40: /^!=$/,
+    $symbol41: /^<$/,
+    $symbol42: /^>$/,
+    $symbol43: /^=$/,
+    $symbol44: /^\+$/,
+    $symbol45: /^-$/,
+    $symbol46: /^\/$/,
+    $symbol47: /^%$/,
+    $symbol48: /^\+\+$/,
+    $symbol49: /^--$/,
+    $symbol50: /^sizeof$/,
+    $symbol51: /^\.$/,
+    $symbol52: /^;$/,
+    $symbol53: /^\*=$/,
+    $symbol54: /^\/=$/,
+    $symbol55: /^%=$/,
+    $symbol56: /^\+=$/,
+    $symbol57: /^-=$/,
+    $symbol58: /^&=$/,
+    $symbol59: /^^=$/,
+    $symbol60: /^\|=$/,
+    $symbol61: /^~$/,
+    $symbol62: /^!$/,
+    $symbol63: /^case$/,
+    $symbol64: /^default$/,
+    $symbol65: /^if$/,
+    $symbol66: /^else$/,
+    $symbol67: /^switch$/,
+    $symbol68: /^while$/,
+    $symbol69: /^do$/,
+    $symbol70: /^for$/,
+    $symbol71: /^goto$/,
+    $symbol72: /^continue$/,
+    $symbol73: /^break$/,
+    $symbol74: /^return$/,
 });
-
 
 export const NodeSymbol = Symbol("Node");
 function Node(type, array){
@@ -275,8 +263,6 @@ export const NodeType = {
     function_definition: Symbol("function_definition"),
     declaration_specifier$r: Symbol("declaration_specifier$r"),
     declaration_specifier$rs: Symbol("declaration_specifier$rs"),
-    declaration$r: Symbol("declaration$r"),
-    declaration$rs: Symbol("declaration$rs"),
     declaration_specifier: Symbol("declaration_specifier"),
     storage_class_specifier: Symbol("storage_class_specifier"),
     type_specifier: Symbol("type_specifier"),
@@ -315,31 +301,24 @@ export const NodeType = {
     cast_expression: Symbol("cast_expression"),
     unary_expression: Symbol("unary_expression"),
     postfix_expression: Symbol("postfix_expression"),
-    assignment_expression$r: Symbol("assignment_expression$r"),
-    assignment_expression$rs: Symbol("assignment_expression$rs"),
     primary_expression: Symbol("primary_expression"),
     constant: Symbol("constant"),
     expression: Symbol("expression"),
     assignment_expression: Symbol("assignment_expression"),
+    assignment_statement: Symbol("assignment_statement"),
     assignment_operator: Symbol("assignment_operator"),
     unary_operator: Symbol("unary_operator"),
     type_name: Symbol("type_name"),
     specifier_qualifier$m: Symbol("specifier_qualifier$m"),
     specifier_qualifier$ms: Symbol("specifier_qualifier$ms"),
     abstract_declarator$o: Symbol("abstract_declarator$o"),
-    parameter_type_list: Symbol("parameter_type_list"),
     parameter_list: Symbol("parameter_list"),
     parameter_declaration: Symbol("parameter_declaration"),
     declaration_specifier$m: Symbol("declaration_specifier$m"),
     declaration_specifier$ms: Symbol("declaration_specifier$ms"),
     abstract_declarator: Symbol("abstract_declarator"),
     direct_abstract_declarator: Symbol("direct_abstract_declarator"),
-    direct_abstract_declarator$o: Symbol("direct_abstract_declarator$o"),
-    parameter_type_list$o: Symbol("parameter_type_list$o"),
-    enum_specifier: Symbol("enum_specifier"),
-    enumerator_list: Symbol("enumerator_list"),
-    enumerator: Symbol("enumerator"),
-    typedef_name: Symbol("typedef_name"),
+    parameter_list$o: Symbol("parameter_list$o"),
     declaration: Symbol("declaration"),
     init_declarator$r: Symbol("init_declarator$r"),
     init_declarator$rs: Symbol("init_declarator$rs"),
@@ -347,6 +326,8 @@ export const NodeType = {
     initializer: Symbol("initializer"),
     initializer_list: Symbol("initializer_list"),
     compound_statement: Symbol("compound_statement"),
+    declaration$r: Symbol("declaration$r"),
+    declaration$rs: Symbol("declaration$rs"),
     statement$r: Symbol("statement$r"),
     statement$rs: Symbol("statement$rs"),
     statement: Symbol("statement"),
@@ -357,8 +338,6 @@ export const NodeType = {
     iteration_statement: Symbol("iteration_statement"),
     jump_statement: Symbol("jump_statement"),
 };
-
-
 const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     token: tokenizer.token(),
     tokenMap: tokenizer.tokenMap(),
@@ -393,7 +372,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.declaration],$=>Node(NodeType.external_declaration, $)],
     ],
     function_definition: _=>[
-        [[_.declaration_specifier$rs,_.declarator,_.declaration$rs,_.compound_statement],$=>Node(NodeType.function_definition, $)],
+        [[_.declaration_specifier$rs,_.declarator,_.compound_statement],$=>Node(NodeType.function_definition, $)],
     ],
     declaration_specifier$r: _=>[
         [[_.declaration_specifier],$=>$],
@@ -402,14 +381,6 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     declaration_specifier$rs: _=>[
         [[_.declaration_specifier$r],$=>Node(NodeType.declaration_specifier, $[0])],
         [[_.declaration_specifier$rs, _.declaration_specifier$r],$=>Node(NodeType.declaration_specifier,$[0].concat($[1]))],
-    ],
-    declaration$r: _=>[
-        [[_.declaration],$=>$],
-        [[],$=>$],
-    ],
-    declaration$rs: _=>[
-        [[_.declaration$r],$=>Node(NodeType.declaration, $[0])],
-        [[_.declaration$rs, _.declaration$r],$=>Node(NodeType.declaration,$[0].concat($[1]))],
     ],
     declaration_specifier: _=>[
         [[_.storage_class_specifier],$=>Node(NodeType.declaration_specifier, $)],
@@ -501,7 +472,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.identifier],$=>Node(NodeType.direct_declarator, $)],
         [[_.token.$symbol29,_.declarator,_.token.$symbol30],$=>Node(NodeType.direct_declarator, $)],
         [[_.direct_declarator,_.token.$symbol31,_.constant_expression$o,_.token.$symbol32],$=>Node(NodeType.direct_declarator, $)],
-        [[_.direct_declarator,_.token.$symbol29,_.parameter_type_list,_.token.$symbol30],$=>Node(NodeType.direct_declarator, $)],
+        [[_.direct_declarator,_.token.$symbol29,_.parameter_list,_.token.$symbol30],$=>Node(NodeType.direct_declarator, $)],
         [[_.direct_declarator,_.token.$symbol29,_.identifier$rs,_.token.$symbol30],$=>Node(NodeType.direct_declarator, $)],
     ],
     constant_expression$o: _=>[
@@ -525,51 +496,51 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ],
     logical_or_expression: _=>[
         [[_.logical_and_expression],$=>Node(NodeType.logical_or_expression, $)],
-        [[_.token.$symbol34,_.token.$symbol35,_.token.$symbol36,_.logical_and_expression],$=>Node(NodeType.logical_or_expression, $)],
+        [[_.logical_or_expression,_.token.$symbol34,_.logical_and_expression],$=>Node(NodeType.logical_or_expression, $)],
     ],
     logical_and_expression: _=>[
         [[_.inclusive_or_expression],$=>Node(NodeType.logical_and_expression, $)],
-        [[_.token.$symbol34,_.token.$symbol37,_.token.$symbol38,_.inclusive_or_expression],$=>Node(NodeType.logical_and_expression, $)],
+        [[_.logical_and_expression,_.token.$symbol35,_.inclusive_or_expression],$=>Node(NodeType.logical_and_expression, $)],
     ],
     inclusive_or_expression: _=>[
         [[_.exclusive_or_expression],$=>Node(NodeType.inclusive_or_expression, $)],
-        [[_.inclusive_or_expression,_.token.$symbol39,_.exclusive_or_expression],$=>Node(NodeType.inclusive_or_expression, $)],
+        [[_.inclusive_or_expression,_.token.$symbol36,_.exclusive_or_expression],$=>Node(NodeType.inclusive_or_expression, $)],
     ],
     exclusive_or_expression: _=>[
         [[_.and_expression],$=>Node(NodeType.exclusive_or_expression, $)],
-        [[_.exclusive_or_expression,_.token.$symbol40,_.and_expression],$=>Node(NodeType.exclusive_or_expression, $)],
+        [[_.exclusive_or_expression,_.token.$symbol37,_.and_expression],$=>Node(NodeType.exclusive_or_expression, $)],
     ],
     and_expression: _=>[
         [[_.equality_expression],$=>Node(NodeType.and_expression, $)],
-        [[_.and_expression,_.token.$symbol41,_.equality_expression],$=>Node(NodeType.and_expression, $)],
+        [[_.and_expression,_.token.$symbol38,_.equality_expression],$=>Node(NodeType.and_expression, $)],
     ],
     equality_expression: _=>[
         [[_.relational_expression],$=>Node(NodeType.equality_expression, $)],
-        [[_.equality_expression,_.token.$symbol42,_.relational_expression],$=>Node(NodeType.equality_expression, $)],
-        [[_.equality_expression,_.token.$symbol43,_.relational_expression],$=>Node(NodeType.equality_expression, $)],
+        [[_.equality_expression,_.token.$symbol39,_.relational_expression],$=>Node(NodeType.equality_expression, $)],
+        [[_.equality_expression,_.token.$symbol40,_.relational_expression],$=>Node(NodeType.equality_expression, $)],
     ],
     relational_expression: _=>[
         [[_.shift_expression],$=>Node(NodeType.relational_expression, $)],
-        [[_.relational_expression,_.token.$symbol34,_.shift_expression],$=>Node(NodeType.relational_expression, $)],
-        [[_.relational_expression,_.token.$symbol44,_.shift_expression],$=>Node(NodeType.relational_expression, $)],
-        [[_.relational_expression,_.token.$symbol34,_.token.$symbol45,_.shift_expression],$=>Node(NodeType.relational_expression, $)],
-        [[_.relational_expression,_.token.$symbol44,_.token.$symbol45,_.shift_expression],$=>Node(NodeType.relational_expression, $)],
+        [[_.relational_expression,_.token.$symbol41,_.shift_expression],$=>Node(NodeType.relational_expression, $)],
+        [[_.relational_expression,_.token.$symbol42,_.shift_expression],$=>Node(NodeType.relational_expression, $)],
+        [[_.relational_expression,_.token.$symbol41,_.token.$symbol43,_.shift_expression],$=>Node(NodeType.relational_expression, $)],
+        [[_.relational_expression,_.token.$symbol42,_.token.$symbol43,_.shift_expression],$=>Node(NodeType.relational_expression, $)],
     ],
     shift_expression: _=>[
         [[_.additive_expression],$=>Node(NodeType.shift_expression, $)],
-        [[_.shift_expression,_.token.$symbol34,_.token.$symbol34,_.additive_expression],$=>Node(NodeType.shift_expression, $)],
-        [[_.shift_expression,_.token.$symbol44,_.token.$symbol44,_.additive_expression],$=>Node(NodeType.shift_expression, $)],
+        [[_.shift_expression,_.token.$symbol41,_.token.$symbol41,_.additive_expression],$=>Node(NodeType.shift_expression, $)],
+        [[_.shift_expression,_.token.$symbol42,_.token.$symbol42,_.additive_expression],$=>Node(NodeType.shift_expression, $)],
     ],
     additive_expression: _=>[
         [[_.multiplicative_expression],$=>Node(NodeType.additive_expression, $)],
-        [[_.additive_expression,_.token.$symbol46,_.multiplicative_expression],$=>Node(NodeType.additive_expression, $)],
-        [[_.additive_expression,_.token.$symbol47,_.multiplicative_expression],$=>Node(NodeType.additive_expression, $)],
+        [[_.additive_expression,_.token.$symbol44,_.multiplicative_expression],$=>Node(NodeType.additive_expression, $)],
+        [[_.additive_expression,_.token.$symbol45,_.multiplicative_expression],$=>Node(NodeType.additive_expression, $)],
     ],
     multiplicative_expression: _=>[
         [[_.cast_expression],$=>Node(NodeType.multiplicative_expression, $)],
         [[_.multiplicative_expression,_.token.$symbol26,_.cast_expression],$=>Node(NodeType.multiplicative_expression, $)],
-        [[_.multiplicative_expression,_.token.$symbol48,_.cast_expression],$=>Node(NodeType.multiplicative_expression, $)],
-        [[_.multiplicative_expression,_.token.$symbol49,_.cast_expression],$=>Node(NodeType.multiplicative_expression, $)],
+        [[_.multiplicative_expression,_.token.$symbol46,_.cast_expression],$=>Node(NodeType.multiplicative_expression, $)],
+        [[_.multiplicative_expression,_.token.$symbol47,_.cast_expression],$=>Node(NodeType.multiplicative_expression, $)],
     ],
     cast_expression: _=>[
         [[_.unary_expression],$=>Node(NodeType.cast_expression, $)],
@@ -577,28 +548,20 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ],
     unary_expression: _=>[
         [[_.postfix_expression],$=>Node(NodeType.unary_expression, $)],
-        [[_.token.$symbol50,_.unary_expression],$=>Node(NodeType.unary_expression, $)],
-        [[_.token.$symbol51,_.unary_expression],$=>Node(NodeType.unary_expression, $)],
+        [[_.token.$symbol48,_.unary_expression],$=>Node(NodeType.unary_expression, $)],
+        [[_.token.$symbol49,_.unary_expression],$=>Node(NodeType.unary_expression, $)],
         [[_.unary_operator,_.cast_expression],$=>Node(NodeType.unary_expression, $)],
-        [[_.token.$symbol52,_.unary_expression],$=>Node(NodeType.unary_expression, $)],
-        [[_.token.$symbol52,_.type_name],$=>Node(NodeType.unary_expression, $)],
+        [[_.token.$symbol50,_.unary_expression],$=>Node(NodeType.unary_expression, $)],
+        [[_.token.$symbol50,_.type_name],$=>Node(NodeType.unary_expression, $)],
     ],
     postfix_expression: _=>[
         [[_.primary_expression],$=>Node(NodeType.postfix_expression, $)],
         [[_.postfix_expression,_.token.$symbol31,_.expression,_.token.$symbol32],$=>Node(NodeType.postfix_expression, $)],
-        [[_.postfix_expression,_.token.$symbol29,_.assignment_expression$rs,_.token.$symbol30],$=>Node(NodeType.postfix_expression, $)],
-        [[_.postfix_expression,_.token.$symbol53,_.identifier],$=>Node(NodeType.postfix_expression, $)],
-        [[_.postfix_expression,_.token.$symbol47,_.token.$symbol44,_.identifier],$=>Node(NodeType.postfix_expression, $)],
-        [[_.postfix_expression,_.token.$symbol50],$=>Node(NodeType.postfix_expression, $)],
-        [[_.postfix_expression,_.token.$symbol51],$=>Node(NodeType.postfix_expression, $)],
-    ],
-    assignment_expression$r: _=>[
-        [[_.assignment_expression],$=>$],
-        [[],$=>$],
-    ],
-    assignment_expression$rs: _=>[
-        [[_.assignment_expression$r],$=>Node(NodeType.assignment_expression, $[0])],
-        [[_.assignment_expression$rs, _.assignment_expression$r],$=>Node(NodeType.assignment_expression,$[0].concat($[1]))],
+        [[_.postfix_expression,_.token.$symbol29,_.expression,_.token.$symbol30],$=>Node(NodeType.postfix_expression, $)],
+        [[_.postfix_expression,_.token.$symbol51,_.identifier],$=>Node(NodeType.postfix_expression, $)],
+        [[_.postfix_expression,_.token.$symbol45,_.token.$symbol42,_.identifier],$=>Node(NodeType.postfix_expression, $)],
+        [[_.postfix_expression,_.token.$symbol48],$=>Node(NodeType.postfix_expression, $)],
+        [[_.postfix_expression,_.token.$symbol49],$=>Node(NodeType.postfix_expression, $)],
     ],
     primary_expression: _=>[
         [[_.identifier],$=>Node(NodeType.primary_expression, $)],
@@ -612,33 +575,35 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.floating_constant],$=>Node(NodeType.constant, $)],
     ],
     expression: _=>[
-        [[_.assignment_expression],$=>Node(NodeType.expression, $)],
-        [[_.expression,_.token.$symbol24,_.assignment_expression],$=>Node(NodeType.expression, $)],
+        [[_.conditional_expression],$=>Node(NodeType.expression, $)],
+        [[_.expression,_.token.$symbol24,_.conditional_expression],$=>Node(NodeType.expression, $)],
     ],
     assignment_expression: _=>[
-        [[_.unary_expression,_.assignment_operator,_.assignment_expression],$=>Node(NodeType.assignment_expression, $)],
-        [[_.conditional_expression],$=>Node(NodeType.assignment_expression, $)],
+        [[_.unary_expression,_.assignment_operator,_.conditional_expression],$=>Node(NodeType.assignment_expression, $)],
+    ],
+    assignment_statement: _=>[
+        [[_.assignment_expression,_.token.$symbol52],$=>Node(NodeType.assignment_statement, $)],
     ],
     assignment_operator: _=>[
-        [[_.token.$symbol45],$=>Node(NodeType.assignment_operator, $)],
+        [[_.token.$symbol43],$=>Node(NodeType.assignment_operator, $)],
+        [[_.token.$symbol53],$=>Node(NodeType.assignment_operator, $)],
         [[_.token.$symbol54],$=>Node(NodeType.assignment_operator, $)],
         [[_.token.$symbol55],$=>Node(NodeType.assignment_operator, $)],
         [[_.token.$symbol56],$=>Node(NodeType.assignment_operator, $)],
         [[_.token.$symbol57],$=>Node(NodeType.assignment_operator, $)],
+        [[_.token.$symbol41,_.token.$symbol41,_.token.$symbol43],$=>Node(NodeType.assignment_operator, $)],
+        [[_.token.$symbol42,_.token.$symbol42,_.token.$symbol43],$=>Node(NodeType.assignment_operator, $)],
         [[_.token.$symbol58],$=>Node(NodeType.assignment_operator, $)],
-        [[_.token.$symbol34,_.token.$symbol34,_.token.$symbol45],$=>Node(NodeType.assignment_operator, $)],
-        [[_.token.$symbol44,_.token.$symbol44,_.token.$symbol45],$=>Node(NodeType.assignment_operator, $)],
         [[_.token.$symbol59],$=>Node(NodeType.assignment_operator, $)],
         [[_.token.$symbol60],$=>Node(NodeType.assignment_operator, $)],
-        [[_.token.$symbol61],$=>Node(NodeType.assignment_operator, $)],
     ],
     unary_operator: _=>[
-        [[_.token.$symbol41],$=>Node(NodeType.unary_operator, $)],
+        [[_.token.$symbol38],$=>Node(NodeType.unary_operator, $)],
         [[_.token.$symbol26],$=>Node(NodeType.unary_operator, $)],
-        [[_.token.$symbol46],$=>Node(NodeType.unary_operator, $)],
-        [[_.token.$symbol47],$=>Node(NodeType.unary_operator, $)],
+        [[_.token.$symbol44],$=>Node(NodeType.unary_operator, $)],
+        [[_.token.$symbol45],$=>Node(NodeType.unary_operator, $)],
+        [[_.token.$symbol61],$=>Node(NodeType.unary_operator, $)],
         [[_.token.$symbol62],$=>Node(NodeType.unary_operator, $)],
-        [[_.token.$symbol63],$=>Node(NodeType.unary_operator, $)],
     ],
     type_name: _=>[
         [[_.specifier_qualifier$ms,_.abstract_declarator$o],$=>Node(NodeType.type_name, $)],
@@ -654,13 +619,9 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.abstract_declarator],$=>Node(NodeType.abstract_declarator,$)],
         [[],$=>$],
     ],
-    parameter_type_list: _=>[
-        [[_.parameter_list],$=>Node(NodeType.parameter_type_list, $)],
-        [[_.parameter_list,_.token.$symbol24,_.token.$symbol64],$=>Node(NodeType.parameter_type_list, $)],
-    ],
     parameter_list: _=>[
         [[_.parameter_declaration],$=>Node(NodeType.parameter_list, $)],
-        [[_.parameter_list,_.token.$symbol24,_.parameter_declaration],$=>Node(NodeType.parameter_list, $)],
+        [[_.parameter_list,_.token.$symbol24,_.parameter_declaration],$=>Node(NodeType.parameter_list, $[0].concat([$[2]]))],
     ],
     parameter_declaration: _=>[
         [[_.declaration_specifier$ms,_.declarator],$=>Node(NodeType.parameter_declaration, $)],
@@ -682,24 +643,16 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     direct_abstract_declarator: _=>[
         [[_.token.$symbol29,_.abstract_declarator,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
         [[_.token.$symbol31,_.constant_expression$o,_.token.$symbol32],$=>Node(NodeType.direct_abstract_declarator, $)],
-        [[_.token.$symbol29,_.parameter_type_list$o,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
+        [[_.token.$symbol29,_.parameter_list$o,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
         [[_.direct_abstract_declarator,_.token.$symbol31,_.constant_expression$o,_.token.$symbol32],$=>Node(NodeType.direct_abstract_declarator, $)],
-        [[_.direct_abstract_declarator,_.token.$symbol29,_.parameter_type_list$o,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
+        [[_.direct_abstract_declarator,_.token.$symbol29,_.parameter_list$o,_.token.$symbol30],$=>Node(NodeType.direct_abstract_declarator, $)],
     ],
-    parameter_type_list$o: _=>[
-        [[_.parameter_type_list],$=>Node(NodeType.parameter_type_list,$)],
+    parameter_list$o: _=>[
+        [[_.parameter_list],$=>Node(NodeType.parameter_list,$)],
         [[],$=>$],
     ],
-    enumerator_list: _=>[
-        [[_.enumerator],$=>Node(NodeType.enumerator_list, $)],
-        [[_.enumerator_list,_.token.$symbol24,_.enumerator],$=>Node(NodeType.enumerator_list, $)],
-    ],
-    enumerator: _=>[
-        [[_.identifier],$=>Node(NodeType.enumerator, $)],
-        [[_.identifier,_.token.$symbol45,_.constant_expression],$=>Node(NodeType.enumerator, $)],
-    ],
     declaration: _=>[
-        [[_.declaration_specifier$ms,_.init_declarator$rs,_.token.$symbol66],$=>Node(NodeType.declaration, $)],
+        [[_.declaration_specifier$ms,_.init_declarator$rs,_.token.$symbol52],$=>Node(NodeType.declaration, $)],
     ],
     init_declarator$r: _=>[
         [[_.init_declarator],$=>$],
@@ -711,7 +664,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ],
     init_declarator: _=>[
         [[_.declarator],$=>Node(NodeType.init_declarator, $)],
-        [[_.declarator,_.token.$symbol45,_.initializer],$=>Node(NodeType.init_declarator, $)],
+        [[_.declarator,_.token.$symbol43,_.initializer],$=>Node(NodeType.init_declarator, $)],
     ],
     initializer: _=>[
         [[_.assignment_expression],$=>Node(NodeType.initializer, $)],
@@ -725,6 +678,14 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     compound_statement: _=>[
         [[_.token.$symbol20,_.declaration$rs,_.statement$rs,_.token.$symbol21],$=>Node(NodeType.compound_statement, $)],
     ],
+    declaration$r: _=>[
+        [[_.declaration],$=>$],
+        [[],$=>$],
+    ],
+    declaration$rs: _=>[
+        [[_.declaration$r],$=>Node(NodeType.declaration, $[0])],
+        [[_.declaration$rs, _.declaration$r],$=>Node(NodeType.declaration,$[0].concat($[1]))],
+    ],
     statement$r: _=>[
         [[_.statement],$=>$],
         [[],$=>$],
@@ -736,6 +697,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     statement: _=>[
         [[_.labeled_statement],$=>Node(NodeType.statement, $)],
         [[_.expression_statement],$=>Node(NodeType.statement, $)],
+        [[_.assignment_statement],$=>Node(NodeType.statement, $)],
         [[_.compound_statement],$=>Node(NodeType.statement, $)],
         [[_.selection_statement],$=>Node(NodeType.statement, $)],
         [[_.iteration_statement],$=>Node(NodeType.statement, $)],
@@ -743,47 +705,48 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ],
     labeled_statement: _=>[
         [[_.identifier,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
-        [[_.token.$symbol67,_.constant_expression,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
-        [[_.token.$symbol68,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
+        [[_.token.$symbol63,_.constant_expression,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
+        [[_.token.$symbol64,_.token.$symbol25,_.statement],$=>Node(NodeType.labeled_statement, $)],
     ],
     expression_statement: _=>[
-        [[_.expression$o,_.token.$symbol66],$=>Node(NodeType.expression_statement, $)],
+        [[_.expression$o,_.token.$symbol52],$=>Node(NodeType.expression_statement, $)],
     ],
     expression$o: _=>[
         [[_.expression],$=>Node(NodeType.expression,$)],
         [[],$=>$],
     ],
     selection_statement: _=>[
-        [[_.token.$symbol69,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement],$=>Node(NodeType.selection_statement, $)],
-        [[_.token.$symbol69,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement,_.token.$symbol70,_.statement],$=>Node(NodeType.selection_statement, $)],
-        [[_.token.$symbol71,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement],$=>Node(NodeType.selection_statement, $)],
+        [[_.token.$symbol65,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement],$=>Node(NodeType.selection_statement, $)],
+        [[_.token.$symbol65,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement,_.token.$symbol66,_.statement],$=>Node(NodeType.selection_statement, $)],
+        [[_.token.$symbol67,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement],$=>Node(NodeType.selection_statement, $)],
     ],
     iteration_statement: _=>[
-        [[_.token.$symbol72,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement],$=>Node(NodeType.iteration_statement, $)],
-        [[_.token.$symbol73,_.statement,_.token.$symbol72,_.token.$symbol29,_.expression,_.token.$symbol30,_.token.$symbol66],$=>Node(NodeType.iteration_statement, $)],
-        [[_.token.$symbol74,_.token.$symbol29,_.expression$o,_.token.$symbol66,_.expression$o,_.token.$symbol66,_.expression$o,_.token.$symbol30,_.statement],$=>Node(NodeType.iteration_statement, $)],
+        [[_.token.$symbol68,_.token.$symbol29,_.expression,_.token.$symbol30,_.statement],$=>Node(NodeType.iteration_statement, $)],
+        [[_.token.$symbol69,_.statement,_.token.$symbol68,_.token.$symbol29,_.expression,_.token.$symbol30,_.token.$symbol52],$=>Node(NodeType.iteration_statement, $)],
+        [[_.token.$symbol70,_.token.$symbol29,_.expression$o,_.token.$symbol52,_.expression$o,_.token.$symbol52,_.expression$o,_.token.$symbol30,_.statement],$=>Node(NodeType.iteration_statement, $)],
     ],
     jump_statement: _=>[
-        [[_.token.$symbol75,_.identifier,_.token.$symbol66],$=>Node(NodeType.jump_statement, $)],
-        [[_.token.$symbol76,_.token.$symbol66],$=>Node(NodeType.jump_statement, $)],
-        [[_.token.$symbol77,_.token.$symbol66],$=>Node(NodeType.jump_statement, $)],
-        [[_.token.$symbol78,_.expression$o,_.token.$symbol66],$=>Node(NodeType.jump_statement, $)],
+        [[_.token.$symbol71,_.identifier,_.token.$symbol52],$=>Node(NodeType.jump_statement, $)],
+        [[_.token.$symbol72,_.token.$symbol52],$=>Node(NodeType.jump_statement, $)],
+        [[_.token.$symbol73,_.token.$symbol52],$=>Node(NodeType.jump_statement, $)],
+        [[_.token.$symbol74,_.expression$o,_.token.$symbol52],$=>Node(NodeType.jump_statement, $)],
     ],
-});
+},false,true);
+
 
 import testcode from './eg';
 import {IRGenerator} from "./ir_gen";
-const [token, tokenType] = tokenizer.tokenize(testcode);
+const token = tokenizer.tokenize(testcode);
 
-const result = parser.parse(token, tokenType, 'function_definition');
+const result = parser.parse(token, 'function_definition');
 function getSpace( deep ){
     let str = "";
     for(let i = 0; i < deep ;i++)str += "  ";
     return str;
 }
 
-for(let i = 0 ;i <= token.length; i++){
-    console.log(`${token[i]} : ${parser.tokenMapReverse.get(tokenType[i])}`)
+for(let i = 0 ;i <= token[0].length; i++){
+    //console.log(`${token[0][i]} : ${parser.tokenMapReverse.get(token[1][i])}`)
 }
 
 function isArray(arr){
@@ -791,13 +754,13 @@ function isArray(arr){
 }
 function printResult(x, deep = 0){
     if( x.hasOwnProperty(NodeSymbol) ){
-        if(x.length == 1 && isArray(x[0]))
-            return printResult(x[0], deep);
+        //if(x.length == 1 && isArray(x[0]))
+        //   return printResult(x[0], deep);
         return getSpace(deep) + x[NodeSymbol].toString() + " : \n" + x.map(x=>printResult(x, deep + 1)).join('\n');
     }else{
         return getSpace(deep) + `${x}\n`;
     }
 }
 console.log(printResult(result));
-
-//const irGenerator = new IRGenerator();
+const irGenerator = new IRGenerator(true);
+irGenerator.generate(result);

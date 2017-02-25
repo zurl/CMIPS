@@ -34,8 +34,6 @@ const tokenizer = new Tokenizer<IMyTokenizer>({
     $end : /^@end@$/
 });
 
-const [token, tokenType] = tokenizer.tokenize(testcode);
-
 const OptionalSymbol = Symbol("optional");
 const RepSymbol = Symbol("rep");
 const RepMoreSymbol = Symbol("repmore");
@@ -86,6 +84,9 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ]
 });
 
+
+const [token, tokenType, tokenLine] = tokenizer.tokenize(testcode);
+
 // ll3 grammar dealing
 // insert @end@ at before 2 words ::=
 const newtoken=[], newtokentype =[];
@@ -100,7 +101,7 @@ for(let i = 0; i <= token.length - 1; i++){
 newtoken.push('@end@');
 newtokentype.push(parser.tokenMap.get('$end'));
 
-const result = parser.parse(newtoken, newtokentype, 'items');
+const result = parser.parse([newtoken, newtokentype, tokenLine], 'items');
 
 const exp = {};
 const tokenHashMap = {};
