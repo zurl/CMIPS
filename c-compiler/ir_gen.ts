@@ -66,7 +66,8 @@ const IRType = {
     'getaddr' : Symbol('getaddr'),
     'store' : Symbol('store'),
     'param' : Symbol('param'),
-    'call' : Symbol('call')
+    'call' : Symbol('call'),
+    'return' : Symbol('return')
 };
 
 function getName(sym){
@@ -75,13 +76,13 @@ function getName(sym){
 
 
 export class IRGenerator{
-    result: [Symbol, number, COperand, COperand][];
+    result: [Symbol, number, COperand, COperand, number][];
     functionTable: Map<string, CFunction>; // name => Function,
     currentFunction: CFunction;
     localSymbolMap: Map<string, [number, any]>;
     localSymbolMapReverse: Map<number, string>;
-
     allocVarNow: number;
+    labelNow: number;
 
     errors: [number,string][];
 
@@ -119,6 +120,12 @@ export class IRGenerator{
             else if( item[0] == IRType.store){
                 console.log(`store ${this.printCon([VarSymbol,item[1]])}, ${this.printCon(item[2])}`);
             }
+            else if( item[0] == IRType.call){
+                console.log(`call ${this.printCon(item[2])}, ${this.printCon(item[3])}`)
+            }
+            else if( item[0] == IRType.param){
+                console.log(`param ${this.printCon(item[2])}`)
+            }
             else if( item[0] == IRType.deref || item[0] == IRType.getaddr){
                 console.log(`${this.printCon([VarSymbol,item[1]])} = ${getName(item[0])} ${this.printCon(item[2])}`);
 
@@ -132,25 +139,27 @@ export class IRGenerator{
 
 
     __genFunctionCall(node){
-        const func = this.functionTable.get(node);
+        const func = this.functionTable.get(node[0][0][0][0][0]);
         if( !func ) { this.error(`no such func`, node); return null;}
         const args = node[2].map( item => this.__genIR(item) );
-        if( !equalType(func[2], args.map( item => item[1])){ this.error(`no call list`, node); return null;}
+        if( !equalType(func[2].slice(1), args.map( item => item[1]))){ this.error(`no call list`, node); return null;}
         for(let item of args){
             this.result.push([
                 IRType.param,
                 null,
                 [item[0], item[2]],
-                [null, null]
+                [null, null],
+                null
             ])
         }
         this.result.push([
             IRType.call,
-            func[1],
+            this.allocLocalSpace(),
+            [ImmSymbol, func[1]],
             [ImmSymbol, args.length],
-            [null, null]
+            null
         ]);
-        console.log(node);
+        return [VarSymbol, func[2][1], this.allocVarNow];
     }
 
     __genIR(node){
@@ -178,12 +187,13 @@ export class IRGenerator{
                         param.map( item => item[1] )
                     )
                 ];
+                this.functionTable.set(this.currentFunction[0], this.currentFunction);
                 if(this.debug)
                     console.log(`function ${this.currentFunction[0]} at ${this.currentFunction[1]}`);
                 this.localSymbolMap = new Map();
                 this.localSymbolMapReverse = new Map();
                 for(let index = 0; index < param.length; index ++){
-                    const item = param[2][index];
+                    const item = param[index];
                     if( this.localSymbolMap.has(item[0])){ this.error(`redefine variable ${item[0]}`,node); return null;}
                     this.localSymbolMap.set(item[0], [index, item[1]]);
                     this.localSymbolMapReverse.set(index, item[0]);
@@ -233,7 +243,8 @@ export class IRGenerator{
                         IRType.store,
                         storageFlag,
                         [rhs[0], rhs[2]],
-                        [null, null]
+                        [null, null],
+                        null
                     ]);
                     return [VarSymbol, rhs[1] ,rhs[2]];
                 }
@@ -241,7 +252,8 @@ export class IRGenerator{
                     IRType[node[1][0][0]],
                     lhs[2],
                     [rhs[0], rhs[2]],
-                    [null, null]
+                    [null, null],
+                    null
                 ]);
                 return [VarSymbol, lhs[1] ,lhs[2]];
             case NodeType.constant:
@@ -275,7 +287,8 @@ export class IRGenerator{
                                     IRType.deref,
                                     this.allocLocalSpace(),
                                     [rhs[0], rhs[2]],
-                                    [null, null]
+                                    [null, null],
+                                    null
                                 ]);
                                 return [LeftSymbol, rhs[1][0], this.allocVarNow];
                             }
@@ -286,7 +299,8 @@ export class IRGenerator{
                                     IRType.getaddr,
                                     this.allocLocalSpace(),
                                     [rhs[0], rhs[2]],
-                                    [null, null]
+                                    [null, null],
+                                    null
                                 ]);
                                 return [VarSymbol, pointerTo(rhs[1]), this.allocVarNow];
                             }
@@ -316,6 +330,14 @@ export class IRGenerator{
                 const val = this.localSymbolMap.get(node[0][0]);
                 if(!val){ this.error("unsolved var", node); return null;}
                 return [LeftSymbol, val[1], val[0]];
+            case NodeType.jump_statement:
+                switch (node[0][0]){
+                    case 'goto':
+                    case 'continue':
+                    case 'return':
+                    case 'break':
+                }
+                throw "1";
             case NodeType.integer_constant:
                 return [ImmSymbol, IntType, parseInt(node[0][0])];
             case NodeType.conditional_expression:
@@ -343,7 +365,8 @@ export class IRGenerator{
                     IRType[node[1][0]],
                     this.allocLocalSpace(),
                     [lt, l[2]],
-                    [rt, r[2]]
+                    [rt, r[2]],
+                    null
                 ]);
                 return [VarSymbol, resultType, this.allocVarNow];
             default:
@@ -361,6 +384,7 @@ export class IRGenerator{
         this.currentFunction = null;
     }
     generate(node){
+        this.labelNow = 0;
         this.__genIR(node);
         this.printError();
     }

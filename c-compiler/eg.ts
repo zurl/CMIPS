@@ -3,14 +3,34 @@
  *  @author zcy <zurl@live.com>
  *  Created at 2/2/2017
  */
-export default`
- void main(int e, int d){
-        int a; int *b; int c;
-        func(e, d);
-   }
+const p =`
    int func(int d, int e){
         int a;
         a = 1;
+   }
+    void main(int e, int d){
+        int a; int *b; int c;
+        a = 1 + d;
+        e = a + 1 + 2;
+        *b = 1;
+        *b = a + 2;
+        a = *b;
+        b = &a;
+        c = e;
+        c = ( 6 * e + 6 ) + 4;
+        func(1, 2);
+   }
+`;
+
+export default`
+
+   int func(int d, int e){
+        int a;
+        a = 1;
+   }
+   void main(int e, int d){
+        int a; int *b; int c;
+        func(e, d);
    }
 
 `
