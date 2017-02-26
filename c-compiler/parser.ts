@@ -131,7 +131,6 @@ export interface IMyParser<T extends IAbstractTokenElements> extends IAbstractPa
     constant: ISymbol<IMyParser<T>>;
     expression: ISymbol<IMyParser<T>>;
     assignment_expression: ISymbol<IMyParser<T>>;
-    assignment_statement: ISymbol<IMyParser<T>>;
     assignment_operator: ISymbol<IMyParser<T>>;
     unary_operator: ISymbol<IMyParser<T>>;
     type_name: ISymbol<IMyParser<T>>;
@@ -305,7 +304,6 @@ export const NodeType = {
     constant: Symbol("constant"),
     expression: Symbol("expression"),
     assignment_expression: Symbol("assignment_expression"),
-    assignment_statement: Symbol("assignment_statement"),
     assignment_operator: Symbol("assignment_operator"),
     unary_operator: Symbol("unary_operator"),
     type_name: Symbol("type_name"),
@@ -450,11 +448,11 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.pointer$o,_.direct_declarator],$=>Node(NodeType.declarator, $)],
     ],
     pointer$o: _=>[
-        [[_.pointer],$=>Node(NodeType.pointer,$)],
-        [[],$=>$],
+        [[_.pointer],$=>Node(NodeType.pointer,$[0])],
+        [[],$=>Node(NodeType.pointer,[])],
     ],
     pointer: _=>[
-        [[_.token.$symbol26,_.type_qualifier$rs,_.pointer$o],$=>Node(NodeType.pointer, $)],
+        [[_.token.$symbol26,_.type_qualifier$rs,_.pointer$o],$=>Node(NodeType.pointer, $[2].concat([$[1]]))],
     ],
     type_qualifier$r: _=>[
         [[_.type_qualifier],$=>$],
@@ -575,14 +573,12 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
         [[_.floating_constant],$=>Node(NodeType.constant, $)],
     ],
     expression: _=>[
-        [[_.conditional_expression],$=>Node(NodeType.expression, $)],
-        [[_.expression,_.token.$symbol24,_.conditional_expression],$=>Node(NodeType.expression, $)],
+        [[_.assignment_expression],$=>Node(NodeType.expression, $)],
+        [[_.expression,_.token.$symbol24,_.assignment_expression],$=>Node(NodeType.expression, $[0].concat($[1]))],
     ],
     assignment_expression: _=>[
-        [[_.unary_expression,_.assignment_operator,_.conditional_expression],$=>Node(NodeType.assignment_expression, $)],
-    ],
-    assignment_statement: _=>[
-        [[_.assignment_expression,_.token.$symbol52],$=>Node(NodeType.assignment_statement, $)],
+        [[_.conditional_expression], $=>$[0]],
+        [[_.conditional_expression,_.assignment_operator,_.assignment_expression],$=>Node(NodeType.assignment_expression, $)],
     ],
     assignment_operator: _=>[
         [[_.token.$symbol43],$=>Node(NodeType.assignment_operator, $)],
@@ -697,7 +693,6 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     statement: _=>[
         [[_.labeled_statement],$=>Node(NodeType.statement, $)],
         [[_.expression_statement],$=>Node(NodeType.statement, $)],
-        [[_.assignment_statement],$=>Node(NodeType.statement, $)],
         [[_.compound_statement],$=>Node(NodeType.statement, $)],
         [[_.selection_statement],$=>Node(NodeType.statement, $)],
         [[_.iteration_statement],$=>Node(NodeType.statement, $)],
@@ -738,7 +733,7 @@ import testcode from './eg';
 import {IRGenerator} from "./ir_gen";
 const token = tokenizer.tokenize(testcode);
 
-const result = parser.parse(token, 'function_definition');
+const result = parser.parse(token, 'translation_unit');
 function getSpace( deep ){
     let str = "";
     for(let i = 0; i < deep ;i++)str += "  ";

@@ -144,13 +144,12 @@ export default`
              | <character-constant>
              | <floating-constant>
 
-<expression> ::= <conditional-expression>
-               | <expression> , <conditional-expression>
+<expression> ::= <assignment-expression>
+               | <expression> , <assignment-expression>
 
-<assignment-expression> ::=  <unary-expression> <assignment-operator> <conditional-expression>                         
+<assignment-expression> ::= <conditional-expression>  
+                          | <conditional-expression> <assignment-operator> <assignment-expression>                         
                            
-<assignment-statement> ::= <assignment-expression> ;                      
-                         
 <assignment-operator> ::= =
                         | @*=
                         | /=
