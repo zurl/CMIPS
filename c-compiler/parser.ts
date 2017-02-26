@@ -574,7 +574,7 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     ],
     expression: _=>[
         [[_.assignment_expression],$=>Node(NodeType.expression, $)],
-        [[_.expression,_.token.$symbol24,_.assignment_expression],$=>Node(NodeType.expression, $[0].concat($[1]))],
+        [[_.expression,_.token.$symbol24,_.assignment_expression],$=>Node(NodeType.expression, $[0].concat([$[2]]))],
     ],
     assignment_expression: _=>[
         [[_.conditional_expression], $=>$[0]],

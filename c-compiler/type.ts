@@ -13,6 +13,7 @@ export const PointerSymbol = Symbol("pointer");
 export const VoidType = Symbol("void");
 export const TypeSymbol = Symbol("type");
 export const StructSymbol = Symbol("struct");
+export const FunctPtrSymbol = Symbol("func");
 
 export function pointerTo(type){
     const result = [type];
@@ -30,11 +31,25 @@ export function toStringType(type){
 }
 
 export function equalType(lhs, rhs){
-    if(isArray(lhs) && isArray(rhs)) return equalType(lhs[0], rhs[0]);
+    if(isArray(lhs) && isArray(rhs)){
+        if(lhs[TypeSymbol] != rhs[TypeSymbol]) return false;
+        if(lhs[TypeSymbol] == PointerSymbol) return equalType(lhs[0], rhs[0]);
+        if(lhs.length != rhs.length)return false;
+        for(let i = 0; i < lhs.length;i ++ ){
+            if( !equalType(lhs[i], rhs[i]))return false;
+        }
+        return true;
+    }
     if(isArray(lhs) || isArray(rhs)) return false;
     return lhs == rhs;
 }
 
 export function isPointer(x){
     return isArray(x) && x[TypeSymbol] == PointerSymbol;
+}
+
+export function funcPointer( ret, args ){
+    const result = [ret].concat(args);
+    result[TypeSymbol] = FunctPtrSymbol;
+    return result;
 }

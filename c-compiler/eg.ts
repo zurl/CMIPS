@@ -4,6 +4,17 @@
  *  Created at 2/2/2017
  */
 export default`
+ void main(int e, int d){
+        int a; int *b; int c;
+        func(e, d);
+   }
+   int func(int d, int e){
+        int a;
+        a = 1;
+   }
+
+`
+const b =`
    void main(int e, int d){
         int a; int *b; int c;
         a = 1 + d;
@@ -14,6 +25,7 @@ export default`
         b = &a;
         c = e;
         c = ( 6 * e + 6 ) + 4;
+        func(1, 2);
    }
    int func(int d, int e){
         int a;

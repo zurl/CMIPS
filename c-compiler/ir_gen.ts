@@ -1,5 +1,5 @@
 import {NodeSymbol, NodeType} from "./parser";
-import {IntType, pointerTo, VoidType, toStringType, equalType, isPointer} from "./type";
+import {IntType, pointerTo, VoidType, toStringType, equalType, isPointer, funcPointer} from "./type";
 /**
  *  @file  C-MIPS-Compiler Intermediate Representation Code Generator
  *  @author zcy <zurl@live.com>
@@ -16,6 +16,7 @@ interface Type{
 
 }
 
+const FuncSymbol = Symbol("func");
 const LeftSymbol = Symbol("left");
 const ImmSymbol = Symbol("imm");
 const VarSymbol = Symbol("var");
@@ -51,7 +52,7 @@ function deduceTypeAssign(lhs, rhs){
 
 type CVariable = [string, any];
 type CParameter = CVariable[];
-type CFunction = [string, number, CParameter, any] // name, line, parameter, return
+type CFunction = [string, number, any[]] // name, line, sign
 type COperand = [Symbol, number];
 const IRType = {
     '+': Symbol('+'),
@@ -63,7 +64,9 @@ const IRType = {
     '=': Symbol('='),
     'deref' : Symbol('deref'),
     'getaddr' : Symbol('getaddr'),
-    'store' : Symbol('store')
+    'store' : Symbol('store'),
+    'param' : Symbol('param'),
+    'call' : Symbol('call')
 };
 
 function getName(sym){
@@ -126,6 +129,30 @@ export class IRGenerator{
         }
     }
 
+
+
+    __genFunctionCall(node){
+        const func = this.functionTable.get(node);
+        if( !func ) { this.error(`no such func`, node); return null;}
+        const args = node[2].map( item => this.__genIR(item) );
+        if( !equalType(func[2], args.map( item => item[1])){ this.error(`no call list`, node); return null;}
+        for(let item of args){
+            this.result.push([
+                IRType.param,
+                null,
+                [item[0], item[2]],
+                [null, null]
+            ])
+        }
+        this.result.push([
+            IRType.call,
+            func[1],
+            [ImmSymbol, args.length],
+            [null, null]
+        ]);
+        console.log(node);
+    }
+
     __genIR(node){
         if(!node.hasOwnProperty(NodeSymbol)) throw " fuck !!!";
         switch(node[NodeSymbol]){
@@ -142,18 +169,21 @@ export class IRGenerator{
                 || node[1][1][1][0] != '('){
                     this.error("invalid function def.", node);
                 }
+                const param = resolveParameters(node[1][1][2]);
                 this.currentFunction = [
                     node[1][1][0][0][0][0], //name
                     this.result.length,
-                    resolveParameters(node[1][1][2]),
-                    getType(node[0][0][0][0][0], node[1][0])
+                    funcPointer(
+                        getType(node[0][0][0][0][0], node[1][0]),
+                        param.map( item => item[1] )
+                    )
                 ];
                 if(this.debug)
                     console.log(`function ${this.currentFunction[0]} at ${this.currentFunction[1]}`);
                 this.localSymbolMap = new Map();
                 this.localSymbolMapReverse = new Map();
-                for(let index = 0; index < this.currentFunction[2].length; index ++){
-                    const item = this.currentFunction[2][index];
+                for(let index = 0; index < param.length; index ++){
+                    const item = param[2][index];
                     if( this.localSymbolMap.has(item[0])){ this.error(`redefine variable ${item[0]}`,node); return null;}
                     this.localSymbolMap.set(item[0], [index, item[1]]);
                     this.localSymbolMapReverse.set(index, item[0]);
@@ -216,12 +246,23 @@ export class IRGenerator{
                 return [VarSymbol, lhs[1] ,lhs[2]];
             case NodeType.constant:
             case NodeType.cast_expression:
-            case NodeType.postfix_expression:
                 if( node.length == 1)return this.__genIR(node[0]);
                 else{
                     //TODO::
                     throw "1";
                 }
+            case NodeType.postfix_expression:
+                if( node.length == 1)return this.__genIR(node[0]);
+                switch( node[1][0] ){
+                    case '(': return this.__genFunctionCall(node);
+                    case '[':
+                    case '->':
+                    case '.':
+                    case '++':
+                    case '--':
+                        throw "postfix"
+                }
+                throw "postfix";
             case NodeType.unary_expression:
                 if( node.length == 1)return this.__genIR(node[0]);
                 else if(node[0][NodeSymbol] == NodeType.unary_operator){
@@ -268,6 +309,10 @@ export class IRGenerator{
                 if( node.length == 1)return this.__genIR(node[0]);
                 else return this.__genIR(node[1]); // brace
             case NodeType.identifier:
+                const funcVal = this.functionTable.get(node[0][0]);
+                if( funcVal ){
+                    return [FuncSymbol, funcVal[2], funcVal];
+                }
                 const val = this.localSymbolMap.get(node[0][0]);
                 if(!val){ this.error("unsolved var", node); return null;}
                 return [LeftSymbol, val[1], val[0]];
