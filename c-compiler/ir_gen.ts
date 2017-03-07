@@ -1,5 +1,5 @@
 import {NodeSymbol, NodeType} from "./parser";
-import {IntType, pointerTo, VoidType, toStringType, equalType, isPointer, funcPointer} from "./type";
+import {IntType, pointerTo, VoidType, toStringType, equalType, isPointer, funcPointer, getTypeSize} from "./type";
 /**
  *  @file  C-MIPS-Compiler Intermediate Representation Code Generator
  *  @author zcy <zurl@live.com>
@@ -16,10 +16,10 @@ interface Type{
 
 }
 
-const FuncSymbol = Symbol("func");
-const LeftSymbol = Symbol("left");
-const ImmSymbol = Symbol("imm");
-const VarSymbol = Symbol("var");
+export const FuncSymbol = Symbol("func");
+export const LeftSymbol = Symbol("left");
+export const ImmSymbol = Symbol("imm");
+export const VarSymbol = Symbol("var");
 
 function isIMM(item){
     return item[0] == ImmSymbol;
@@ -50,11 +50,7 @@ function deduceTypeAssign(lhs, rhs){
     return equalType(lhs[1], rhs[1]);
 }
 
-type CVariable = [string, any];
-type CParameter = CVariable[];
-type CFunction = [string, number, any[]] // name, line, sign
-type COperand = [Symbol, number];
-const IRType = {
+export const IRType = {
     '+': Symbol('+'),
     '-': Symbol('-'),
     '*': Symbol('*'),
@@ -70,16 +66,31 @@ const IRType = {
     'return' : Symbol('return')
 };
 
-function getName(sym){
+export function getName(sym){
     return sym.toString().split('(')[1].split(')')[0]
 }
-
-
+type CVariable = [string, any];
+type CParameter = CVariable[];
+export interface CFunction{
+    name: string;
+    lineStart: number;
+    lineEnd: number;
+    isLeaf: boolean;
+    sign: any;
+    stack: Map<number, number>,
+    stackSpace: number
+}
+type COperand = [Symbol, number];
+                    // ope dst src src label
+export type IR = [Symbol, number, COperand, COperand, number];
 export class IRGenerator{
-    result: [Symbol, number, COperand, COperand, number][];
+    result: IR[];
     functionTable: Map<string, CFunction>; // name => Function,
+    stackAllocationTable: Map<number, number>; // typeid => offset
+
+
     currentFunction: CFunction;
-    localSymbolMap: Map<string, [number, any]>;
+    localSymbolMap: Map<string, [number, any, boolean]>; // offset / type / isSolid
     localSymbolMapReverse: Map<number, string>;
     allocVarNow: number;
     labelNow: number;
@@ -101,6 +112,20 @@ export class IRGenerator{
     printCon(arr){
         if( arr[0] == ImmSymbol)return arr[1];
         else return this.localSymbolMapReverse.get(arr[1]);
+    }
+
+    optim(){
+
+    }
+
+    allocStack(){
+        let now = 0;
+        for(let x of this.localSymbolMap.entries()){
+            const size =getTypeSize(x[1][1]);
+            this.stackAllocationTable.set(x[1][0],now);
+            now += size;
+        }
+        return now;
     }
 
     allocLocalSpace(){
@@ -128,7 +153,9 @@ export class IRGenerator{
             }
             else if( item[0] == IRType.deref || item[0] == IRType.getaddr){
                 console.log(`${this.printCon([VarSymbol,item[1]])} = ${getName(item[0])} ${this.printCon(item[2])}`);
-
+            }
+            else if ( item[0] == IRType.return){
+                console.log(`return`);
             }
             else{
                 console.log(`${this.printCon([VarSymbol, item[1]])} = ${this.printCon(item[2])} ${getName(item[0])} ${this.printCon(item[3])}`);
@@ -139,10 +166,10 @@ export class IRGenerator{
 
 
     __genFunctionCall(node){
-        const func = this.functionTable.get(node[0][0][0][0][0]);
+        const func  = this.functionTable.get(node[0][0][0][0][0]) as CFunction;
         if( !func ) { this.error(`no such func`, node); return null;}
         const args = node[2].map( item => this.__genIR(item) );
-        if( !equalType(func[2].slice(1), args.map( item => item[1]))){ this.error(`no call list`, node); return null;}
+        if( !equalType(func.sign.slice(1), args.map( item => item[1]))){ this.error(`no call list`, node); return null;}
         for(let item of args){
             this.result.push([
                 IRType.param,
@@ -155,11 +182,12 @@ export class IRGenerator{
         this.result.push([
             IRType.call,
             this.allocLocalSpace(),
-            [ImmSymbol, func[1]],
+            [ImmSymbol, func.lineStart],
             [ImmSymbol, args.length],
             null
         ]);
-        return [VarSymbol, func[2][1], this.allocVarNow];
+        this.currentFunction.isLeaf = false;
+        return [VarSymbol, func.sign[1], this.allocVarNow];
     }
 
     __genIR(node){
@@ -179,32 +207,47 @@ export class IRGenerator{
                     this.error("invalid function def.", node);
                 }
                 const param = resolveParameters(node[1][1][2]);
-                this.currentFunction = [
-                    node[1][1][0][0][0][0], //name
-                    this.result.length,
-                    funcPointer(
-                        getType(node[0][0][0][0][0], node[1][0]),
-                        param.map( item => item[1] )
-                    )
-                ];
-                this.functionTable.set(this.currentFunction[0], this.currentFunction);
-                if(this.debug)
-                    console.log(`function ${this.currentFunction[0]} at ${this.currentFunction[1]}`);
                 this.localSymbolMap = new Map();
                 this.localSymbolMapReverse = new Map();
+                this.stackAllocationTable = new Map();
+                this.currentFunction = {
+                    name: node[1][1][0][0][0][0], //name
+                    lineStart: this.result.length,
+                    lineEnd: 0,
+                    sign: funcPointer(
+                        getType(node[0][0][0][0][0], node[1][0]),
+                        param.map(item => item[1])
+                    ),
+                    isLeaf: true,
+                    stack: this.stackAllocationTable,
+                    stackSpace: 0
+                };
+                this.functionTable.set(this.currentFunction.name, this.currentFunction);
+                if(this.debug)
+                    console.log(`function ${this.currentFunction.name} at ${this.currentFunction.lineStart}`);
                 for(let index = 0; index < param.length; index ++){
                     const item = param[index];
                     if( this.localSymbolMap.has(item[0])){ this.error(`redefine variable ${item[0]}`,node); return null;}
-                    this.localSymbolMap.set(item[0], [index, item[1]]);
+                    this.localSymbolMap.set(item[0], [index, item[1], false]);
                     this.localSymbolMapReverse.set(index, item[0]);
                 }
                 this.allocVarNow = this.localSymbolMap.size - 1;
                 this.__genIR(node[2][1]); //decl
                 this.__genIR(node[2][2]); //stmt
+                this.result.push([
+                    IRType.return,
+                    null,
+                    [null, null],
+                    [null, null],
+                    null
+                ]);
                 if(this.debug){
-                    console.log(this.currentFunction[0] + " : ");
-                    this.print(this.currentFunction[1]);
+                    console.log(this.currentFunction.name + " : ");
+                    this.print(this.currentFunction.lineStart);
                 }
+                this.currentFunction.lineEnd = this.result.length;
+                this.optim();
+                this.currentFunction.stackSpace = this.allocStack();
                 this.currentFunction = null;
                 break;
             case NodeType.declaration:
@@ -212,7 +255,7 @@ export class IRGenerator{
                     const type = getType(item[0][0][0][0][0], item[1][0][0][0]);
                     const name = item[1][0][0][1][0][0][0];
                     if( this.localSymbolMap.has(name)){ this.error(`redefine variable ${name}`, node); return null;}
-                    this.localSymbolMap.set(name, [++this.allocVarNow, type]);
+                    this.localSymbolMap.set(name, [++this.allocVarNow, type, false]);
                     this.localSymbolMapReverse.set(this.allocVarNow, name);
                     if(this.debug)console.log(`type :${toStringType(type)}, name: ${name}`);
                 }
@@ -295,6 +338,8 @@ export class IRGenerator{
                             else{ this.error("deref error", node); return null;}
                         case '&':
                             if( rhs[0] != ImmSymbol && rhs[2] < this.localSymbolMap.size){
+                                const name = this.localSymbolMapReverse.get(rhs[2]);
+                                this.localSymbolMap.get(name)[3] = true;
                                 this.result.push([
                                     IRType.getaddr,
                                     this.allocLocalSpace(),
@@ -334,10 +379,18 @@ export class IRGenerator{
                 switch (node[0][0]){
                     case 'goto':
                     case 'continue':
-                    case 'return':
+                    case 'return': //TODO::
+                        this.result.push([
+                            IRType.return,
+                            null,
+                            [null, null],
+                            [null, null],
+                            null
+                        ]);
+                        return null;
                     case 'break':
                 }
-                throw "1";
+                throw "jump ex";
             case NodeType.integer_constant:
                 return [ImmSymbol, IntType, parseInt(node[0][0])];
             case NodeType.conditional_expression:

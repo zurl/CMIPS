@@ -30,6 +30,7 @@ export default`
    }
    void main(int e, int d){
         int a; int *b; int c;
+        *b = 1 + 2 * a;
         func(e, d);
    }
 

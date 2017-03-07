@@ -166,7 +166,7 @@ export interface IMyParser<T extends IAbstractTokenElements> extends IAbstractPa
 
 import {IAbstractTokenElements,IToken,IAbstractParserElements,ISymbol} from 'tparser';
 import {Parser, Tokenizer} from "tparser";
-const tokenizer = new Tokenizer<IMyTokenizer>({
+export const tokenizer = new Tokenizer<IMyTokenizer>({
     split: /\s*([a-zA-Z_][a-zA-Z0-9_]*|-?[0-9]+(\.[0-9]*)?|\,|\;|\+|\%|\-|\*|\/|=|\+=|\-=|\/=|\*=|\||\&|\^|\(|\)|\]|\]|\{|\})\s*/y,
     $symbol1: [/^[a-zA-Z_][a-zA-Z0-9_]*$/, -1],
     $symbol2: /^".*"$/,
@@ -336,7 +336,7 @@ export const NodeType = {
     iteration_statement: Symbol("iteration_statement"),
     jump_statement: Symbol("jump_statement"),
 };
-const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
+export const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
     token: tokenizer.token(),
     tokenMap: tokenizer.tokenMap(),
     identifier: _=>[
@@ -729,33 +729,3 @@ const parser = new Parser<IMyTokenizer, IMyParser<IMyTokenizer>>({
 },false,true);
 
 
-import testcode from './eg';
-import {IRGenerator} from "./ir_gen";
-const token = tokenizer.tokenize(testcode);
-
-const result = parser.parse(token, 'translation_unit');
-function getSpace( deep ){
-    let str = "";
-    for(let i = 0; i < deep ;i++)str += "  ";
-    return str;
-}
-
-for(let i = 0 ;i <= token[0].length; i++){
-    //console.log(`${token[0][i]} : ${parser.tokenMapReverse.get(token[1][i])}`)
-}
-
-function isArray(arr){
-    return Object.prototype.toString.call(arr) === "[object Array]";
-}
-function printResult(x, deep = 0){
-    if( x.hasOwnProperty(NodeSymbol) ){
-        //if(x.length == 1 && isArray(x[0]))
-        //   return printResult(x[0], deep);
-        return getSpace(deep) + x[NodeSymbol].toString() + " : \n" + x.map(x=>printResult(x, deep + 1)).join('\n');
-    }else{
-        return getSpace(deep) + `${x}\n`;
-    }
-}
-console.log(printResult(result));
-const irGenerator = new IRGenerator(true);
-irGenerator.generate(result);

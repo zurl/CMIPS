@@ -1,1 +1,1 @@
-{"version":3,"file":"eg.js","sourceRoot":"","sources":["../../c-compiler/eg.ts"],"names":[],"mappings":";;AAAA;;;;GAIG;AACH,kBAAc;;;;;;;;;;CAUb,CAAA;AACD,MAAM,CAAC,GAAE;;;;;;;;;;;;;;;;;CAiBR,CAAA;AACD,MAAM,CAAC,GACP;;gBAEgB,CAAC;AACjB;;;;;;;;GAQG"}
+{"version":3,"file":"eg.js","sourceRoot":"","sources":["../../c-compiler/eg.ts"],"names":[],"mappings":";;AAAA;;;;GAIG;AACH,MAAM,CAAC,GAAE;;;;;;;;;;;;;;;;;CAiBR,CAAC;AAEF,kBAAc;;;;;;;;;;;;CAYb,CAAA;AACD,MAAM,CAAC,GAAE;;;;;;;;;;;;;;;;;CAiBR,CAAA;AACD,MAAM,CAAC,GACP;;gBAEgB,CAAC;AACjB;;;;;;;;GAQG"}

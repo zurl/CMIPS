@@ -53,3 +53,15 @@ export function funcPointer( ret, args ){
     result[TypeSymbol] = FunctPtrSymbol;
     return result;
 }
+
+
+export function getTypeSize(x){
+    if( isArray(x)){
+        if( x[TypeSymbol] == FunctPtrSymbol) return 4;
+        else if( x[TypeSymbol] == PointerSymbol) return 4;
+        else return 0;
+    }else{
+        if( x== IntType) return 4;
+        return 4;
+    }
+}
